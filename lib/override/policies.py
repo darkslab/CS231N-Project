@@ -33,12 +33,12 @@ class ProjectActorCriticPolicy(ActorCriticPolicy):
         }
 
         sanitized_kwargs = {}
-        for kwarg, kwarg_val in restricted_kwargs.items():
-            sanitized_kwargs = kwargs.get(kwarg, kwarg_val)
-            if sanitized_kwargs[kwarg] != kwarg_val:
-                raise AssertionError(f"{type(self).__name__}: {kwarg} has to be {kwarg_val}")
-        for kwarg, kwarg_val in default_kwargs.items():
-            sanitized_kwargs = kwargs.get(kwarg, kwarg_val)
+        for restricted_kwarg, restricted_kwval in restricted_kwargs.items():
+            sanitized_kwargs[restricted_kwarg] = kwargs.get(restricted_kwarg, restricted_kwval)
+            if sanitized_kwargs[restricted_kwarg] != restricted_kwval:
+                raise AssertionError(f"{type(self).__name__}: {restricted_kwarg} has to be {restricted_kwval}")
+        for default_kwarg, default_kwval in default_kwargs.items():
+            sanitized_kwargs[default_kwarg] = kwargs.get(default_kwarg, default_kwval)
 
         super().__init__(
             observation_space,
