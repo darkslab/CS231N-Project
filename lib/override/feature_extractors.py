@@ -8,5 +8,4 @@ class ProjectFeatureExtractor(BaseFeaturesExtractor):
         super().__init__(observation_space, features_dim=1)
 
     def forward(self, observations: torch.Tensor) -> torch.Tensor:
-        # DARK_NEXT  implement this!
-        raise NotImplementedError()
+        return observations / 255 * 2 - 1

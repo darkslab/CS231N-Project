@@ -3,6 +3,7 @@ from torch.optim import Adam
 from stable_baselines3.common.type_aliases import Schedule
 from stable_baselines3.common.policies import ActorCriticPolicy
 from .feature_extractors import ProjectFeatureExtractor
+from ..models import *
 
 
 class ProjectActorCriticPolicy(ActorCriticPolicy):
@@ -48,6 +49,4 @@ class ProjectActorCriticPolicy(ActorCriticPolicy):
         )
 
     def _build_mlp_extractor(self) -> None:
-        # DARK_NEXT  implement this!
-        raise NotImplementedError()
-        self.mlp_extractor = None
+        self.mlp_extractor = TestGenesisModel()
