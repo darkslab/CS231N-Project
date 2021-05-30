@@ -19,5 +19,5 @@ env = make_vec_env(
 )
 
 model = PPO("CnnPolicy", env, verbose=1)
-model.learn(total_timesteps=10e6)
+model.learn(total_timesteps=1e6)
 model.save("trained/baseline/PPO-MsPacMan-Genesis-001")

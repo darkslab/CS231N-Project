@@ -12,6 +12,7 @@ class ProjectActorCriticPolicy(ActorCriticPolicy):
         observation_space: gym.spaces.Space,
         action_space: gym.spaces.Space,
         lr_schedule: Schedule,
+        project_model_class=TestGenesisModel,
         **kwargs,
     ):
         restricted_kwargs = {
@@ -41,6 +42,8 @@ class ProjectActorCriticPolicy(ActorCriticPolicy):
         for default_kwarg, default_kwval in default_kwargs.items():
             sanitized_kwargs[default_kwarg] = kwargs.get(default_kwarg, default_kwval)
 
+        self._project_model_class = project_model_class
+
         super().__init__(
             observation_space,
             action_space,
@@ -49,4 +52,4 @@ class ProjectActorCriticPolicy(ActorCriticPolicy):
         )
 
     def _build_mlp_extractor(self) -> None:
-        self.mlp_extractor = TestGenesisModel()
+        self.mlp_extractor = self._project_model_class()
