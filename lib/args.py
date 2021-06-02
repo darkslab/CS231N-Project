@@ -7,7 +7,7 @@ def args():
     parser = ArgumentParser(prog="project", description="CS231N 2021 Project (dark@stanford.edu) (darkhan@baimyrza.com)")
     parser.add_argument(
         "--model",
-        choices=[ "baseline", "model1" ],
+        choices=[ "baseline", "model1", "model2" ],
         required=True,
         help="a model",
     )

@@ -46,6 +46,11 @@ def main(args):
             ppo_kwargs["policy_kwargs"] = {
                 "project_model_class": MsPacManGenesisModel,
             }
+        elif args.model == "model2":
+            ppo_args.append(ProjectActorCriticPolicy)
+            ppo_kwargs["policy_kwargs"] = {
+                "project_model_class": MsPacMan2GenesisModel,
+            }
         elif args.model == "baseline":
             ppo_args.append("CnnPolicy")
 
