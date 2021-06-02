@@ -28,6 +28,12 @@ def main(args):
         iteration_dir_path = next_iteration_dir_path()
         iteration_dir_path.mkdir()
 
+        with open(str(iteration_dir_path / "description.txt"), "w") as description_file:
+            print("%-20.20s: %s" % ("game", "MsPacMan-Genesis"), file=description_file)
+            print("%-20.20s: %s" % ("model", args.model), file=description_file)
+            print("%-20.20s: %s" % ("train_timesteps_per_update", args.train_timesteps_per_update), file=description_file)
+            print("%-20.20s: %s" % ("train_total_timesteps", args.train_total_timesteps), file=description_file)
+
         ppo_args = []
         ppo_kwargs = {
             "n_steps": args.train_timesteps_per_update,
