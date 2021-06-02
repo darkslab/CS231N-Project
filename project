@@ -31,7 +31,7 @@ def main(args):
         ppo_args = []
         ppo_kwargs = {
             "n_steps": args.train_timesteps_per_update,
-            "tensorboard_log": None,
+            "tensorboard_log": iteration_dir_path,
             "verbose": 1,
         }
 
