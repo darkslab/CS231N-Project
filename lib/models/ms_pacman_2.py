@@ -9,7 +9,7 @@ class MsPacMan2GenesisModel(nn.Module):
         self.latent_dim_pi = 1024
         self.latent_dim_vf = 1024
 
-        self.common_net = torchvision.models.resnet152(pretrained=True)
+        self.common_net = torchvision.models.vgg11(pretrained=True)
         for param in self.common_net.parameters():
             param.requires_grad = False
 
