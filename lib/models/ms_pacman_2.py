@@ -13,8 +13,8 @@ class MsPacMan2GenesisModel(nn.Module):
         for param in self.common_net.parameters():
             param.requires_grad = False
 
-        self.common_net.fc = nn.Sequential(
-            nn.Linear(2048, 2048),
+        self.common_net.classifier[6] = nn.Sequential(
+            nn.Linear(4096, 2048),
             nn.ReLU(),
         )
 
