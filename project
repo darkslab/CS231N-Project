@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+
+from sys import exit
+from lib.args import args
+from lib.util import next_iteration_dir_path
+import retro
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3 import PPO
+from lib.override.policies import ProjectActorCriticPolicy
+from lib.override.env_wrappers import project_env_wrapper
+from lib.models import *
+from pathlib import Path
+
+
+def main(args):
+    base_path = Path(__file__).resolve().parent
+    retro.data.Integrations.add_custom_path(base_path / "games")
+    env = make_vec_env(
+        retro.make,
+        wrapper_class=project_env_wrapper,
+        env_kwargs={
+            "game": "MsPacMan-Genesis",
+            "inttype": retro.data.Integrations.CUSTOM_ONLY
+        },
+    )
+
+    if args.train:
+        iteration_dir_path = next_iteration_dir_path()
+        iteration_dir_path.mkdir()
+
+        with open(str(iteration_dir_path / "description.txt"), "w") as description_file:
+            print("%-20.20s: %s" % ("game", "MsPacMan-Genesis"), file=description_file)
+            print("%-20.20s: %s" % ("model", args.model), file=description_file)
+            print("%-20.20s: %s" % ("train_timesteps_per_update", args.train_timesteps_per_update), file=description_file)
+            print("%-20.20s: %s" % ("train_total_timesteps", args.train_total_timesteps), file=description_file)
+
+        ppo_args = []
+        ppo_kwargs = {
+            "n_steps": args.train_timesteps_per_update,
+            "tensorboard_log": iteration_dir_path,
+            "verbose": 1,
+        }
+
+        if args.model == "model1":
+            ppo_args.append(ProjectActorCriticPolicy)
+            ppo_kwargs["policy_kwargs"] = {
+                "project_model_class": MsPacManGenesisModel,
+            }
+        elif args.model == "model2":
+            ppo_args.append(ProjectActorCriticPolicy)
+            ppo_kwargs["policy_kwargs"] = {
+                "project_model_class": MsPacMan2GenesisModel,
+            }
+        elif args.model == "baseline":
+            ppo_args.append("CnnPolicy")
+
+        ppo_args.append(env)
+
+        model = PPO(*ppo_args, **ppo_kwargs)
+        model.learn(total_timesteps=args.train_total_timesteps)
+        model.save(iteration_dir_path / "model")
+
+        print(f"Completed training iteration {iteration_dir_path.name}")
+
+    if args.eval:
+        if args.train:
+            del model
+        if args.eval_train_iteration != "current":
+            iteration_dir_path = base_path / "iterations" / args.eval_train_iteration
+        model = PPO.load(iteration_dir_path / "model")
+        obs = env.reset()
+        total_rewards = 0.0
+        while True:
+            action, states = model.predict(obs)
+            obs, rewards, dones, info = env.step(action)
+            total_rewards += rewards.sum()
+            env.render()
+            print(total_rewards)
+            if dones.item():
+                break
+
+
+if __name__ == "__main__":
+    try:
+        main(args())
+    except KeyboardInterrupt:
+        print()
+        print("Interrupted")
+        exit(1)
